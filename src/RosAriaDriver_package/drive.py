@@ -70,13 +70,18 @@ class  RosAriaDriver():
 
       rate = rospy.Rate(10.0)
       while not rospy.is_shutdown() and abs(angle-z)>0.5:
+
+          if(self.pub.get_num_connections()==0):
+              rospy.logerr("Oops!  Error connect with robot")
+              return 
+
           if angle<0 : angle2=angle+360;
           else: angle2=angle
           if z<0 : z2=z+360;
           else: z2=z
   
           self.pub.publish(geometry_msgs.msg.Twist(Vector3(0,0,0),Vector3(0,0,(angle2-z2)/50)))
-          rospy.loginfo ("kat: %0.1f",z)
+          rospy.loginfo ("Angle: %0.1f",z)
           rate.sleep()
 
   #drive robot X meter
@@ -89,12 +94,16 @@ class  RosAriaDriver():
       rate = rospy.Rate(10.0)
       l=math.sqrt((x0-x)*(x0-x)+(y0-y)*(y0-y));
       while not rospy.is_shutdown() and abs(abs(X)-l)>0.005:
+          if(self.pub.get_num_connections()==0):
+              rospy.logerr("Oops!  Error connect with robot")
+              return 
+
           l=math.sqrt((x0-x)*(x0-x)+(y0-y)*(y0-y));
           if (X>0):
              self.pub.publish(geometry_msgs.msg.Twist(Vector3((X-l)*P,0,0),Vector3(0,0,0)))
           else:
              self.pub.publish(geometry_msgs.msg.Twist(Vector3((X+l)*P,0,0),Vector3(0,0,0)))           
-          rospy.loginfo ("Odleglosc: %0.2f",abs(abs(X)-l))
+          rospy.loginfo ("Distance: %0.2f",abs(abs(X)-l))
           rate.sleep()
 
   #set speed X in m/s Z in rad/s

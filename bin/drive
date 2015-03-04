@@ -5,15 +5,15 @@ from RosAriaDriver_package.drive import RosAriaDriver
 
 robot=RosAriaDriver('/PIONIER2')
 robot.GripperDown();
-sleep(5);
+sleep(1);
 robot.GripperOpen();
-sleep(5);
+sleep(1);
 robot.GripperUp();
-sleep(5);
+sleep(1);
 robot.GripperClose();
-sleep(5);
+sleep(1);
 robot.goto(-3);
-sleep(5);
+sleep(1);
 robot.goto(3);
 robot.rotate(90)
     
