@@ -30,24 +30,24 @@ class  RosAriaDriver():
 
   #Subscribe rosaria pose topic and return position and rotate
   def _callback_pose(self, data):
-      self.x=data.pose.pose.position.x;
-      self.y=data.pose.pose.position.y;
+      self._x=data.pose.pose.position.x;
+      self._y=data.pose.pose.position.y;
       quaternion = (
           data.pose.pose.orientation.x,
           data.pose.pose.orientation.y,
           data.pose.pose.orientation.z,
           data.pose.pose.orientation.w)
       euler = tf.transformations.euler_from_quaternion(quaternion)
-      self.z = euler[2]/3.14*180;
+      self._z = euler[2]/3.14*180;
 
   ## Konstruktor.
-  #  @param self Wskaźnik na objekt.
+  #  @param self Wskaźnik na obiekt.
   #  @param robot Nazwa robota.
   def __init__(self, robot):
     self._ROBOT=robot;
-    self.x=0;
-    self.y=0;
-    self.z=0;
+    self._x=0;
+    self._y=0;
+    self._z=0;
     rospy.init_node('drive')
     rospy.Subscriber(self._ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self._callback_pose)
 
@@ -77,12 +77,12 @@ class  RosAriaDriver():
 
   #rotate robot, in global angle
   ## Powoduje obrót robota.
-  #  @param self Wskaźnik na objekt.
+  #  @param self Wskaźnik na obiekt.
   #  @param angle Kąt w którym ma się znaleźć robot.
   def Rotate(self,angle):
 
       rate = rospy.Rate(10.0)
-      while not rospy.is_shutdown() and abs(angle-self.z)>0.5:
+      while not rospy.is_shutdown() and abs(angle-self._z)>0.5:
 
         #  if(self.pub.get_num_connections()==0):
         #      rospy.logerr("Oops!  Error connect with robot")
@@ -90,8 +90,8 @@ class  RosAriaDriver():
 
           if angle<0 : angle2=angle+360;
           else: angle2=angle
-          if self.z<0 : z2=self.z+360;
-          else: z2=self.z
+          if self._z<0 : z2=self._z+360;
+          else: z2=self._z
   
           self.pub.publish(geometry_msgs.msg.Twist(Vector3(0,0,0),Vector3(0,0,(angle2-z2)/50)))
           rospy.loginfo ("Angle: %0.1f",z)
@@ -99,21 +99,21 @@ class  RosAriaDriver():
 
   #drive robot X meter
   ## Powoduje jazdę robota.
-  #  @param self Wskaźnik na objekt.
+  #  @param self Wskaźnik na obiekt.
   #  @param X Ilość metrów do przejechania.
 
   def GoTo(self,X):
-      x0=self.x;
-      y0=self.y;
+      x0=self._x;
+      y0=self._y;
       rospy.Subscriber(self._ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self._callback_pose)
       rate = rospy.Rate(10.0)
-      l=math.sqrt((x0-self.x)*(x0-self.x)+(y0-self.y)*(y0-self.y));
+      l=math.sqrt((x0-self._x)*(x0-self._x)+(y0-self._y)*(y0-self._y));
       while not rospy.is_shutdown() and abs(abs(X)-l)>0.005:
           #if(self.pub.get_num_connections()==0):
           #    rospy.logerr("Oops!  Error connect with robot")
           #    return 
 
-          l=math.sqrt((x0-self.x)*(x0-self.x)+(y0-self.y)*(y0-self.y));
+          l=math.sqrt((x0-self._x)*(x0-self._x)+(y0-self._y)*(y0-self._y));
           if (X<0):
              self._pub.publish(geometry_msgs.msg.Twist(Vector3((X+l)*P,0,0),Vector3(0,0,0)))           
           else:
@@ -124,7 +124,7 @@ class  RosAriaDriver():
 
   #set speed X in m/s Z in rad/s
   ## Zadanie prędkości jazdy i obrotu.
-  #  @param self Wskaźnik na objekt.
+  #  @param self Wskaźnik na obiekt.
   #  @param X Prędkość postępowa w [m/s].
   #  @param Z Prędkość obrotu w [rad/s].
   #  @param T Czas trwania w [s].
@@ -135,7 +135,7 @@ class  RosAriaDriver():
       T=T-0.1
 
   ## Zadanie prędkości lewego i prawego koła .
-  #  @param self Wskaźnik na objekt.
+  #  @param self Wskaźnik na obiekt.
   #  @param L Prędkość lewego koła w [m/s].
   #  @param R Prędkość prawego koła w[m/s].
   #  @param T Czas trwania w [s].
@@ -150,7 +150,7 @@ class  RosAriaDriver():
       T=T-0.1
 
   ## Otwarcie chwytaka.
-  #  @param self Wskaźnik na objekt.
+  #  @param self Wskaźnik na obiekt.
   def GripperOpen(self):
     rospy.loginfo ("Gripper opening")
     try:
@@ -158,8 +158,8 @@ class  RosAriaDriver():
     except:
        rospy.logerr("Oops!  Error opening gripper!!!")
 
-  ## Zamknięcia chwytaka.
-  #  @param self Wskaźnik na objekt.
+  ## Zamknięcie chwytaka.
+  #  @param self Wskaźnik na obiekt.
   def GripperClose(self):
     rospy.loginfo ("Gripper closing")
     try:
@@ -168,7 +168,7 @@ class  RosAriaDriver():
        rospy.logerr("Oops!  Error closing gripper!!!")
 
   ## Podniesienie chwytaka.
-  #  @param self Wskaźnik na objekt.
+  #  @param self Wskaźnik na obiekt.
   def GripperUp(self):
     rospy.loginfo ("Gripper moving up")
     try:
@@ -177,7 +177,7 @@ class  RosAriaDriver():
        rospy.logerr("Oops!  Error moving up gripper!!!")
 
   ## Opuszczenie chwytaka.
-  #  @param self Wskaźnik na objekt.
+  #  @param self Wskaźnik na obiekt.
   def GripperDown(self):
     rospy.loginfo ("Gripper moving down")
     try:
@@ -186,7 +186,7 @@ class  RosAriaDriver():
        rospy.logerr("Oops!  Error moving down gripper!!!")
 
   ## Informacja.
-  #  @param self Wskaźnik na objekt.
+  #  @param self Wskaźnik na obiekt.
   def About(self):
     print("\n\n\n")
     print("Biblioteka do obsługi robotów pioneer w python")
