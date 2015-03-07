@@ -24,36 +24,32 @@ import math
 from time import sleep
 
 P=0.5; #Gain
-x=0
-y=0
-z=0
-w=0
+
 class  RosAriaDriver():
 
 
   #Subscribe rosaria pose topic and return position and rotate
-  def _callback(self, data):
-      global x;
-      global y;
-      global z;
-  
-      x=data.pose.pose.position.x;
-      y=data.pose.pose.position.y;
+  def _callback_pose(self, data):
+      self.x=data.pose.pose.position.x;
+      self.y=data.pose.pose.position.y;
       quaternion = (
           data.pose.pose.orientation.x,
           data.pose.pose.orientation.y,
           data.pose.pose.orientation.z,
           data.pose.pose.orientation.w)
       euler = tf.transformations.euler_from_quaternion(quaternion)
-      z = euler[2]/3.14*180;
+      self.z = euler[2]/3.14*180;
 
   ## Konstruktor.
   #  @param self Wskaźnik na objekt.
   #  @param robot Nazwa robota.
   def __init__(self, robot):
     self._ROBOT=robot;
+    self.x=0;
+    self.y=0;
+    self.z=0;
     rospy.init_node('drive')
-    rospy.Subscriber(self._ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self._callback)
+    rospy.Subscriber(self._ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self._callback_pose)
 
     self._GripperOpen  = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_open',std_srvs.srv.Empty)
     self._GripperClose = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_close',std_srvs.srv.Empty)
@@ -86,7 +82,7 @@ class  RosAriaDriver():
   def Rotate(self,angle):
 
       rate = rospy.Rate(10.0)
-      while not rospy.is_shutdown() and abs(angle-z)>0.5:
+      while not rospy.is_shutdown() and abs(angle-self.z)>0.5:
 
         #  if(self.pub.get_num_connections()==0):
         #      rospy.logerr("Oops!  Error connect with robot")
@@ -94,8 +90,8 @@ class  RosAriaDriver():
 
           if angle<0 : angle2=angle+360;
           else: angle2=angle
-          if z<0 : z2=z+360;
-          else: z2=z
+          if self.z<0 : z2=self.z+360;
+          else: z2=self.z
   
           self.pub.publish(geometry_msgs.msg.Twist(Vector3(0,0,0),Vector3(0,0,(angle2-z2)/50)))
           rospy.loginfo ("Angle: %0.1f",z)
@@ -107,19 +103,17 @@ class  RosAriaDriver():
   #  @param X Ilość metrów do przejechania.
 
   def GoTo(self,X):
-      global x;
-      global y;
-      x0=x;
-      y0=y;
-      rospy.Subscriber(self._ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self._callback)
+      x0=self.x;
+      y0=self.y;
+      rospy.Subscriber(self._ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self._callback_pose)
       rate = rospy.Rate(10.0)
-      l=math.sqrt((x0-x)*(x0-x)+(y0-y)*(y0-y));
+      l=math.sqrt((x0-self.x)*(x0-self.x)+(y0-self.y)*(y0-self.y));
       while not rospy.is_shutdown() and abs(abs(X)-l)>0.005:
           #if(self.pub.get_num_connections()==0):
           #    rospy.logerr("Oops!  Error connect with robot")
           #    return 
 
-          l=math.sqrt((x0-x)*(x0-x)+(y0-y)*(y0-y));
+          l=math.sqrt((x0-self.x)*(x0-self.x)+(y0-self.y)*(y0-self.y));
           if (X<0):
              self._pub.publish(geometry_msgs.msg.Twist(Vector3((X+l)*P,0,0),Vector3(0,0,0)))           
           else:
@@ -140,7 +134,6 @@ class  RosAriaDriver():
       sleep(0.1);
       T=T-0.1
 
-  #dont ready jet
   ## Zadanie prędkości lewego i prawego koła .
   #  @param self Wskaźnik na objekt.
   #  @param L Prędkość lewego koła w [m/s].
@@ -149,7 +142,7 @@ class  RosAriaDriver():
 
   def SetSpeedLR(self, L, R, T):
     SpeedX = (L+R)/2.0
-    SpeedZ = (R-L)*8.0 #razy wsp zalezny od kola i roztawu osi
+    SpeedZ = (R-L)/0.185 #polowa roztawu osi
 
     while T>0:
       self._pub.publish(geometry_msgs.msg.Twist(Vector3(SpeedX,0,0),Vector3(0,0,SpeedZ)))
@@ -203,5 +196,3 @@ class  RosAriaDriver():
     print("Kontakt  : damian.baranski@pwr.wroc.pl")
     print("\n\n\n")
 
-   
-    
