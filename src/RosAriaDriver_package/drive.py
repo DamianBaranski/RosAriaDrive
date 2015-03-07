@@ -1,4 +1,14 @@
-#!/usr/bin/env python  
+#!/usr/bin/env python 
+# -*- coding: utf-8 -*-
+
+## @class RosAriaDriver
+#  
+#  Klasa ułatwiająca połączenie z robotem Pioneer
+#
+#  @author Damian Barański \n
+#  Data : 25/02/2015 \n
+#  Oprogramowanie na licencji GNU GPL
+
 import roslib
 import rospy
 import tf
@@ -11,6 +21,7 @@ from nav_msgs.msg import Odometry
 import std_srvs.srv
 from std_srvs.srv import Empty
 import math
+from time import sleep
 
 P=0.5; #Gain
 x=0
@@ -19,8 +30,9 @@ z=0
 w=0
 class  RosAriaDriver():
 
+
   #Subscribe rosaria pose topic and return position and rotate
-  def callback(self, data):
+  def _callback(self, data):
       global x;
       global y;
       global z;
@@ -35,45 +47,50 @@ class  RosAriaDriver():
       euler = tf.transformations.euler_from_quaternion(quaternion)
       z = euler[2]/3.14*180;
 
-  #Constructor 
+  ## Konstruktor.
+  #  @param self Wskaźnik na objekt.
+  #  @param robot Nazwa robota.
   def __init__(self, robot):
-    self.ROBOT=robot;
+    self._ROBOT=robot;
     rospy.init_node('drive')
-    rospy.Subscriber(self.ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self.callback)
+    rospy.Subscriber(self._ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self._callback)
 
-    self._GripperOpen  = rospy.ServiceProxy(self.ROBOT+'/RosAria/gripper_open',std_srvs.srv.Empty)
-    self._GripperClose = rospy.ServiceProxy(self.ROBOT+'/RosAria/gripper_close',std_srvs.srv.Empty)
-    self._GripperUp    = rospy.ServiceProxy(self.ROBOT+'/RosAria/gripper_up',std_srvs.srv.Empty)
-    self._GripperDown  = rospy.ServiceProxy(self.ROBOT+'/RosAria/gripper_down',std_srvs.srv.Empty)
-    self.pub = rospy.Publisher(self.ROBOT+'/RosAria/cmd_vel', geometry_msgs.msg.Twist, queue_size=10)
+    self._GripperOpen  = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_open',std_srvs.srv.Empty)
+    self._GripperClose = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_close',std_srvs.srv.Empty)
+    self._GripperUp    = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_up',std_srvs.srv.Empty)
+    self._GripperDown  = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_down',std_srvs.srv.Empty)
+    self._pub = rospy.Publisher(self._ROBOT+'/RosAria/cmd_vel', geometry_msgs.msg.Twist, queue_size=10)
 
   #dont ready
-  def calk_angle(X,Y):
-    if X==0:
-      if Y>0:
-          kat=90;
-      else:
-          kat=-90;
-    else:
-      kat=math.atan2(abs(Y),abs(X))/3.14*180;   
-      rospy.loginfo ("x=%s y=%s kat: %s",X,Y,kat)
-      if X<0:
-          kat=180-kat;
-      if Y<0:
-          kat=-kat;
-    rospy.loginfo ("x=%s y=%s kat: %s",X,Y,kat)
-    return kat
-  pass
+#  def calk_angle(X,Y):
+#    if X==0:
+#      if Y>0:
+#          kat=90;
+#      else:
+#          kat=-90;
+#    else:
+#      kat=math.atan2(abs(Y),abs(X))/3.14*180;   
+#      rospy.loginfo ("x=%s y=%s angle: %s",X,Y,kat)
+#      if X<0:
+#          kat=180-kat;
+#      if Y<0:
+#          kat=-kat;
+#    rospy.loginfo ("x=%s y=%s angle: %s",X,Y,kat)
+#    return kat
+#  pass
 
   #rotate robot, in global angle
-  def rotate(self,angle):
+  ## Powoduje obrót robota.
+  #  @param self Wskaźnik na objekt.
+  #  @param angle Kąt w którym ma się znaleźć robot.
+  def Rotate(self,angle):
 
       rate = rospy.Rate(10.0)
       while not rospy.is_shutdown() and abs(angle-z)>0.5:
 
-          if(self.pub.get_num_connections()==0):
-              rospy.logerr("Oops!  Error connect with robot")
-              return 
+        #  if(self.pub.get_num_connections()==0):
+        #      rospy.logerr("Oops!  Error connect with robot")
+        #      return 
 
           if angle<0 : angle2=angle+360;
           else: angle2=angle
@@ -85,35 +102,62 @@ class  RosAriaDriver():
           rate.sleep()
 
   #drive robot X meter
-  def goto(self,X):
-      global x0;
-      global y0;
+  ## Powoduje jazdę robota.
+  #  @param self Wskaźnik na objekt.
+  #  @param X Ilość metrów do przejechania.
+
+  def GoTo(self,X):
+      global x;
+      global y;
       x0=x;
       y0=y;
-      rospy.Subscriber(self.ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self.callback)
+      rospy.Subscriber(self._ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self._callback)
       rate = rospy.Rate(10.0)
       l=math.sqrt((x0-x)*(x0-x)+(y0-y)*(y0-y));
       while not rospy.is_shutdown() and abs(abs(X)-l)>0.005:
-          if(self.pub.get_num_connections()==0):
-              rospy.logerr("Oops!  Error connect with robot")
-              return 
+          #if(self.pub.get_num_connections()==0):
+          #    rospy.logerr("Oops!  Error connect with robot")
+          #    return 
 
           l=math.sqrt((x0-x)*(x0-x)+(y0-y)*(y0-y));
-          if (X>0):
-             self.pub.publish(geometry_msgs.msg.Twist(Vector3((X-l)*P,0,0),Vector3(0,0,0)))
+          if (X<0):
+             self._pub.publish(geometry_msgs.msg.Twist(Vector3((X+l)*P,0,0),Vector3(0,0,0)))           
           else:
-             self.pub.publish(geometry_msgs.msg.Twist(Vector3((X+l)*P,0,0),Vector3(0,0,0)))           
+             self._pub.publish(geometry_msgs.msg.Twist(Vector3((X-l)*P,0,0),Vector3(0,0,0)))
+
           rospy.loginfo ("Distance: %0.2f",abs(abs(X)-l))
           rate.sleep()
 
   #set speed X in m/s Z in rad/s
-  def setSpeed(self, X, Z):
-    self.pub.publish(geometry_msgs.msg.Twist(Vector3(X,0,0),Vector3(0,0,Z)))
+  ## Zadanie prędkości jazdy i obrotu.
+  #  @param self Wskaźnik na objekt.
+  #  @param X Prędkość postępowa w [m/s].
+  #  @param Z Prędkość obrotu w [rad/s].
+  #  @param T Czas trwania w [s].
+  def SetSpeed(self, X, Z, T):
+    while T>0:
+      self._pub.publish(geometry_msgs.msg.Twist(Vector3(X,0,0),Vector3(0,0,Z)))
+      sleep(0.1);
+      T=T-0.1
 
   #dont ready jet
-  def setSpeedLR(self, L, R):
-    self.pub.publish(geometry_msgs.msg.Twist(Vector3((L+R)/2,0,0),Vector3(0,0,0)))
+  ## Zadanie prędkości lewego i prawego koła .
+  #  @param self Wskaźnik na objekt.
+  #  @param L Prędkość lewego koła w [m/s].
+  #  @param R Prędkość prawego koła w[m/s].
+  #  @param T Czas trwania w [s].
 
+  def SetSpeedLR(self, L, R, T):
+    SpeedX = (L+R)/2.0
+    SpeedZ = (R-L)*8.0 #razy wsp zalezny od kola i roztawu osi
+
+    while T>0:
+      self._pub.publish(geometry_msgs.msg.Twist(Vector3(SpeedX,0,0),Vector3(0,0,SpeedZ)))
+      sleep(0.1);
+      T=T-0.1
+
+  ## Otwarcie chwytaka.
+  #  @param self Wskaźnik na objekt.
   def GripperOpen(self):
     rospy.loginfo ("Gripper opening")
     try:
@@ -121,6 +165,8 @@ class  RosAriaDriver():
     except:
        rospy.logerr("Oops!  Error opening gripper!!!")
 
+  ## Zamknięcia chwytaka.
+  #  @param self Wskaźnik na objekt.
   def GripperClose(self):
     rospy.loginfo ("Gripper closing")
     try:
@@ -128,6 +174,8 @@ class  RosAriaDriver():
     except:
        rospy.logerr("Oops!  Error closing gripper!!!")
 
+  ## Podniesienie chwytaka.
+  #  @param self Wskaźnik na objekt.
   def GripperUp(self):
     rospy.loginfo ("Gripper moving up")
     try:
@@ -135,6 +183,8 @@ class  RosAriaDriver():
     except:
        rospy.logerr("Oops!  Error moving up gripper!!!")
 
+  ## Opuszczenie chwytaka.
+  #  @param self Wskaźnik na objekt.
   def GripperDown(self):
     rospy.loginfo ("Gripper moving down")
     try:
@@ -142,3 +192,16 @@ class  RosAriaDriver():
     except:
        rospy.logerr("Oops!  Error moving down gripper!!!")
 
+  ## Informacja.
+  #  @param self Wskaźnik na objekt.
+  def About(self):
+    print("\n\n\n")
+    print("Biblioteka do obsługi robotów pioneer w python")
+    print("Autor    : Damian Barański")
+    print("Data     : 25-02-2015")
+    print("Licencja : GNU GPL")
+    print("Kontakt  : damian.baranski@pwr.wroc.pl")
+    print("\n\n\n")
+
+   
+    

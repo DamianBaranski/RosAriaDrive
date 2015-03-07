@@ -1,0 +1,175 @@
+.TH "RosAriaDriver_package.drive.RosAriaDriver" 3 "Sat Mar 7 2015" "RosAriaDriver" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+RosAriaDriver_package.drive.RosAriaDriver \- 
+.PP
+Klasa ułatwiająca połączenie z robotem Pioneer\&.  
+
+.SH SYNOPSIS
+.br
+.PP
+.SS "Metody publiczne"
+
+.in +1c
+.ti -1c
+.RI "def \fB__init__\fP"
+.br
+.RI "\fIKonstruktor\&. \fP"
+.ti -1c
+.RI "def \fBRotate\fP"
+.br
+.RI "\fIPowoduje obrót robota\&. \fP"
+.ti -1c
+.RI "def \fBGoTo\fP"
+.br
+.RI "\fIPowoduje jazdę robota\&. \fP"
+.ti -1c
+.RI "def \fBSetSpeed\fP"
+.br
+.RI "\fIZadanie prędkości jazdy i obrotu\&. \fP"
+.ti -1c
+.RI "def \fBSetSpeedLR\fP"
+.br
+.RI "\fIZadanie prędkości lewego i prawego koła \&. \fP"
+.ti -1c
+.RI "def \fBGripperOpen\fP"
+.br
+.RI "\fIOtwarcie chwytaka\&. \fP"
+.ti -1c
+.RI "def \fBGripperClose\fP"
+.br
+.RI "\fIZamknięcia chwytaka\&. \fP"
+.ti -1c
+.RI "def \fBGripperUp\fP"
+.br
+.RI "\fIPodniesienie chwytaka\&. \fP"
+.ti -1c
+.RI "def \fBGripperDown\fP"
+.br
+.RI "\fIOpuszczenie chwytaka\&. \fP"
+.ti -1c
+.RI "def \fBAbout\fP"
+.br
+.RI "\fIInformacja\&. \fP"
+.in -1c
+.SH "Opis szczegółowy"
+.PP 
+Klasa ułatwiająca połączenie z robotem Pioneer\&. 
+
+\fBAutor:\fP
+.RS 4
+Damian Barański 
+.br
+ Data : 25/02/2015 
+.br
+ Oprogramowanie na licencji GNU GPL 
+.RE
+.PP
+
+.SH "Dokumentacja konstruktora i destruktora"
+.PP 
+.SS "def \fBRosAriaDriver_package\&.drive\&.RosAriaDriver\&.__init__\fP (self, robot)"
+.PP
+Konstruktor\&. \fBParametry:\fP
+.RS 4
+\fIself\fP Wskaźnik na objekt\&. 
+.br
+\fIrobot\fP Nazwa robota\&. 
+.RE
+.PP
+
+.SH "Dokumentacja funkcji składowych"
+.PP 
+.SS "def \fBRosAriaDriver_package\&.drive\&.RosAriaDriver\&.About\fP (self)"
+.PP
+Informacja\&. \fBParametry:\fP
+.RS 4
+\fIself\fP Wskaźnik na objekt\&. 
+.RE
+.PP
+
+.SS "def \fBRosAriaDriver_package\&.drive\&.RosAriaDriver\&.GoTo\fP (self, X)"
+.PP
+Powoduje jazdę robota\&. \fBParametry:\fP
+.RS 4
+\fIself\fP Wskaźnik na objekt\&. 
+.br
+\fIX\fP Ilość metrów do przejechania\&. 
+.RE
+.PP
+
+.SS "def \fBRosAriaDriver_package\&.drive\&.RosAriaDriver\&.GripperClose\fP (self)"
+.PP
+Zamknięcia chwytaka\&. \fBParametry:\fP
+.RS 4
+\fIself\fP Wskaźnik na objekt\&. 
+.RE
+.PP
+
+.SS "def \fBRosAriaDriver_package\&.drive\&.RosAriaDriver\&.GripperDown\fP (self)"
+.PP
+Opuszczenie chwytaka\&. \fBParametry:\fP
+.RS 4
+\fIself\fP Wskaźnik na objekt\&. 
+.RE
+.PP
+
+.SS "def \fBRosAriaDriver_package\&.drive\&.RosAriaDriver\&.GripperOpen\fP (self)"
+.PP
+Otwarcie chwytaka\&. \fBParametry:\fP
+.RS 4
+\fIself\fP Wskaźnik na objekt\&. 
+.RE
+.PP
+
+.SS "def \fBRosAriaDriver_package\&.drive\&.RosAriaDriver\&.GripperUp\fP (self)"
+.PP
+Podniesienie chwytaka\&. \fBParametry:\fP
+.RS 4
+\fIself\fP Wskaźnik na objekt\&. 
+.RE
+.PP
+
+.SS "def \fBRosAriaDriver_package\&.drive\&.RosAriaDriver\&.Rotate\fP (self, angle)"
+.PP
+Powoduje obrót robota\&. \fBParametry:\fP
+.RS 4
+\fIself\fP Wskaźnik na objekt\&. 
+.br
+\fIangle\fP Kąt w którym ma się znaleźć robot\&. 
+.RE
+.PP
+
+.SS "def \fBRosAriaDriver_package\&.drive\&.RosAriaDriver\&.SetSpeed\fP (self, X, Z, T)"
+.PP
+Zadanie prędkości jazdy i obrotu\&. \fBParametry:\fP
+.RS 4
+\fIself\fP Wskaźnik na objekt\&. 
+.br
+\fIX\fP Prędkość postępowa w [m/s]\&. 
+.br
+\fIZ\fP Prędkość obrotu w [rad/s]\&. 
+.br
+\fIT\fP Czas trwania w [s]\&. 
+.RE
+.PP
+
+.SS "def \fBRosAriaDriver_package\&.drive\&.RosAriaDriver\&.SetSpeedLR\fP (self, L, R, T)"
+.PP
+Zadanie prędkości lewego i prawego koła \&. \fBParametry:\fP
+.RS 4
+\fIself\fP Wskaźnik na objekt\&. 
+.br
+\fIL\fP Prędkość lewego koła w [m/s]\&. 
+.br
+\fIR\fP Prędkość prawego koła w[m/s]\&. 
+.br
+\fIT\fP Czas trwania w [s]\&. 
+.RE
+.PP
+
+
+.SH "Autor"
+.PP 
+Wygenerowano automatycznie z kodu źródłowego programem Doxygen dla RosAriaDriver\&.
