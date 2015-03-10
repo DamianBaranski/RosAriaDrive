@@ -5,42 +5,42 @@ from RosAriaDriver_package.drive import RosAriaDriver
 
 robot=RosAriaDriver('/PIONIER2')
 
-robot.GripperDown();
-sleep(3);
+#robot.GripperDown();
+#sleep(3);
 
 
-robot.GripperOpen();
-sleep(3);
+#robot.GripperOpen();
+#sleep(3);
 
 
-robot.goto(-0.3);
+#robot.goto(-0.3);
 
 
-robot.GripperClose();
-sleep(3);
+#robot.GripperClose();
+#sleep(3);
 
-robot.GripperUp();
-sleep(3);
+#robot.GripperUp();
+#sleep(3);
 
 
-robot.rotate(90);
-robot.goto(2);
+#robot.rotate(90);
+#robot.goto(2);
 
-robot.rotate(0);
+#robot.rotate(0);
 
-robot.GripperDown();
-sleep(3);
+#robot.GripperDown();
+#sleep(3);
 
-robot.GripperOpen();
-sleep(3);
+#robot.GripperOpen();
+#sleep(3);
 
-robot.goto(0.3);
+#robot.goto(0.3);
 
-robot.GripperClose();
-sleep(3);
+#robot.GripperClose();
+#sleep(3);
 
-robot.GripperUp();
-sleep(3);
+#robot.GripperUp();
+#sleep(3);
 
 robot.goto(-0.3);
 robot.rotate(270);

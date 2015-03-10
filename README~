@@ -12,10 +12,10 @@
  *  robot=RosAriaDriver('/PIONIER2')                                          \n
  *                                                                            \n
  *  \#Jazda robota tylko prawym kołem                                                                  			\n
- *  robot.SetSpeedLR(0,1,0.3)                   \n
+ *  robot.SetSpeedLR(0,1,5)                     \n
  *                                              \n
  *  \#Jazda robota do przodu z predkoscią 3m/s  \n
- *  robot.SetSpeed(3,0,0.5)                     \n
+ *  robot.SetSpeed(3,0,2)                       \n
  *                                              \n
  *  \#Zatrzymanie robota                        \n
  *  robot.SetSpeed(0,0,1)                       \n
