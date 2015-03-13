@@ -4,46 +4,8 @@ from time import sleep
 from RosAriaDriver_package.drive import RosAriaDriver
 
 robot=RosAriaDriver('/PIONIER2')
-
-#robot.GripperDown();
-#sleep(3);
-
-
-#robot.GripperOpen();
-#sleep(3);
-
-
-#robot.GoTo(-0.3);
-
-
-#robot.GripperClose();
-#sleep(3);
-
-#robot.GripperUp();
-#sleep(3);
-
-
-#robot.Rotate(90);
-#robot.GoTo(2);
-
-#robot.Rotate(0);
-
-#robot.GripperDown();
-#sleep(3);
-
-#robot.GripperOpen();
-#sleep(3);
-
-#robot.GoTo(0.3);
-
-#robot.GripperClose();
-#sleep(3);
-
-#robot.GripperUp();
-#sleep(3);
-
-robot.GoTo(-0.3);
-robot.Rotate(270);
-
+robot.ResetPose()
+robot.Rotate(90)
+print robot.ReadSonar()
 
 

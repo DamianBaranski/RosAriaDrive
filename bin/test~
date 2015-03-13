@@ -4,7 +4,6 @@ from time import sleep
 from RosAriaDriver_package.drive import RosAriaDriver
 
 robot=RosAriaDriver('/PIONIER2')
-#robot.Test()
 robot.SetSpeedLR(-1,1,10);
 
 

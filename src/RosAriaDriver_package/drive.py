@@ -5,13 +5,16 @@
 #  
 #  Klasa ułatwiająca połączenie z robotem Pioneer
 #
-#  @author Damian Barański \n
-#  Data : 25/02/2015 \n
-#  Oprogramowanie na licencji GNU GPL
+#  @author   Damian Barański \n
+#  @date     25/02/2015 \n
+#  @license  Projekt rozwijany na licencji GNU GPL
 
 import roslib
 import rospy
 import tf
+import struct
+import sensor_msgs.msg
+from sensor_msgs.msg import PointCloud2
 import geometry_msgs.msg
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
@@ -27,18 +30,33 @@ P=1.5; #Gain
 MaxAngleSpeed=0.8;
 
 class  RosAriaDriver():
-  #Subscribe rosaria pose topic and return position and rotate
+    #Subscribe rosaria pose topic and return position and rotate
   def _callback_pose(self, data):
-      self._x=data.pose.pose.position.x;
-      self._y=data.pose.pose.position.y;
-      quaternion = (
-          data.pose.pose.orientation.x,
-          data.pose.pose.orientation.y,
-          data.pose.pose.orientation.z,
-          data.pose.pose.orientation.w)
-      euler = tf.transformations.euler_from_quaternion(quaternion)
-      self._z = euler[2]/3.14*180;
-      self._redy=1;
+    self._x=data.pose.pose.position.x-self._x0;
+    self._y=data.pose.pose.position.y-self._y0;
+
+    quaternion = (
+        data.pose.pose.orientation.x,
+        data.pose.pose.orientation.y,
+        data.pose.pose.orientation.z,
+        data.pose.pose.orientation.w)
+    euler = tf.transformations.euler_from_quaternion(quaternion)
+
+    self._z = divmod(euler[2]/3.14*180-self._z0+180,360)[1]-180;
+    self._ready=1;
+
+
+  def _callback_sonar(self, data):
+    #byte to float32
+    i=0;
+    self._sonar=[];
+    for i in range(0, data.width*12, 12):
+      x=struct.unpack('f', '%c%c%c%c' % (data.data[0+i], data.data[1+i], data.data[2+i], data.data[3+i] ))[0];
+      y=struct.unpack('f', '%c%c%c%c' % (data.data[4+i], data.data[5+i], data.data[6+i], data.data[7+i] ))[0];
+      self._sonar.append([x, y])
+
+    self._SonarReady=1;
+
 
   ## Konstruktor.
   #  @param self Wskaźnik na obiekt.
@@ -48,9 +66,17 @@ class  RosAriaDriver():
     self._x=0;
     self._y=0;
     self._z=0;
-    self._redy=0;
+    self._x0=0;
+    self._y0=0;
+    self._z0=0;
+    self._ready=0;
+
+    self._sonar = [];
+    self._SonarReady=0;
+   
     rospy.init_node('drive')
     rospy.Subscriber(self._ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self._callback_pose)
+    rospy.Subscriber(self._ROBOT+"/RosAria/sonar_pointcloud2",  sensor_msgs.msg.PointCloud2, self._callback_sonar)
 
     self._GripperOpen  = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_open',std_srvs.srv.Empty)
     self._GripperClose = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_close',std_srvs.srv.Empty)
@@ -58,31 +84,13 @@ class  RosAriaDriver():
     self._GripperDown  = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_down',std_srvs.srv.Empty)
     self._pub = rospy.Publisher(self._ROBOT+'/RosAria/cmd_vel', geometry_msgs.msg.Twist, queue_size=10)
 
-  #dont ready
-#  def calk_angle(X,Y):
-#    if X==0:
-#      if Y>0:
-#          kat=90;
-#      else:
-#          kat=-90;
-#    else:
-#      kat=math.atan2(abs(Y),abs(X))/3.14*180;   
-#      rospy.loginfo ("x=%s y=%s angle: %s",X,Y,kat)
-#      if X<0:
-#          kat=180-kat;
-#      if Y<0:
-#          kat=-kat;
-#    rospy.loginfo ("x=%s y=%s angle: %s",X,Y,kat)
-#    return kat
-#  pass
-
   #rotate robot, in global angle
   ## Powoduje obrót robota.
   #  @param self Wskaźnik na obiekt.
   #  @param angle Kąt w którym ma się znaleźć robot.
   def Rotate(self,angle):
       #wait for data from robot
-      while self._redy==0:
+      while self._ready==0:
         pass
 
       z2=divmod(self._z,360)[1];        
@@ -117,7 +125,7 @@ class  RosAriaDriver():
 
   def GoTo(self,X):
       #wait for data from robot
-      while self._redy==0:
+      while self._ready==0:
         pass
 
       x0=self._x;
@@ -202,6 +210,37 @@ class  RosAriaDriver():
       self._GripperDown()
     except:
        rospy.logerr("Oops!  Error moving down gripper!!!")
+
+  ## Metoda zwracająca pozycje robota
+  #  @param self Wskaźnik na obiekt.
+  #  @return x[m], y[m], z[stopnie].
+  
+  def GetPose(self):
+    while self._ready==0:
+      pass
+    return (self._x-self._x0, self._y-self._y0, divmod(self._z-self._z0+180,360)[1]-180)
+
+  ## Zeruje pozycję robota
+  #  @param self Wskaźnik na obiekt.
+  
+  def ResetPose(self):
+    self._ready=0;
+    while self._ready==0:
+      pass
+    self._x0=self._x;
+    self._y0=self._y;
+    self._z0=self._z;
+
+  ## Zwraca dane z sonarów
+  #  @param self Wskaźnik na obiekt.
+  #  @return tabicę [[x,y],[x,y],...].
+
+  def ReadSonar(self):
+    self._SonarReady=0;
+    while self._SonarReady==0:
+      pass
+    return self._sonar;
+
 
   ## Informacja.
   #  @param self Wskaźnik na obiekt.

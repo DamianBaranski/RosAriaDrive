@@ -36,6 +36,7 @@ INHERIT_DOCS           = YES
 SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 1
 ALIASES                = 
+ALIASES += "license=@par Licencja:\n"
 TCL_SUBST              = 
 OPTIMIZE_OUTPUT_FOR_C  = NO
 OPTIMIZE_OUTPUT_JAVA   = NO
