@@ -15,6 +15,8 @@ import tf
 import struct
 import sensor_msgs.msg
 from sensor_msgs.msg import PointCloud2
+from sensor_msgs.msg import LaserScan
+
 import geometry_msgs.msg
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
@@ -58,6 +60,11 @@ class  RosAriaDriver():
     self._SonarReady=1;
 
 
+  def _callback_laser(self, data):
+    self._laser=data.ranges;
+    self._LaserReady=1;
+
+
   ## Konstruktor.
   #  @param self Wskaźnik na obiekt.
   #  @param robot Nazwa robota.
@@ -75,20 +82,27 @@ class  RosAriaDriver():
     self._SonarReady=0;
    
     rospy.init_node('drive')
+
     rospy.Subscriber(self._ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self._callback_pose)
     rospy.Subscriber(self._ROBOT+"/RosAria/sonar_pointcloud2",  sensor_msgs.msg.PointCloud2, self._callback_sonar)
+    rospy.Subscriber(self._ROBOT+"/scan",  sensor_msgs.msg.LaserScan, self._callback_laser)
 
     self._GripperOpen  = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_open',std_srvs.srv.Empty)
     self._GripperClose = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_close',std_srvs.srv.Empty)
     self._GripperUp    = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_up',std_srvs.srv.Empty)
     self._GripperDown  = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_down',std_srvs.srv.Empty)
+    self._stop_motors  = rospy.ServiceProxy(self._ROBOT+'/RosAria/stop_motors',std_srvs.srv.Empty)
+    self._start_motors  = rospy.ServiceProxy(self._ROBOT+'/RosAria/start_motors',std_srvs.srv.Empty)
     self._pub = rospy.Publisher(self._ROBOT+'/RosAria/cmd_vel', geometry_msgs.msg.Twist, queue_size=10)
+
 
   #rotate robot, in global angle
   ## Powoduje obrót robota.
   #  @param self Wskaźnik na obiekt.
   #  @param angle Kąt w którym ma się znaleźć robot.
   def Rotate(self,angle):
+      #uruchamiam silniki
+      self._start_motors();
       #wait for data from robot
       while self._ready==0:
         pass
@@ -124,6 +138,9 @@ class  RosAriaDriver():
   #  @param X Ilość metrów do przejechania.
 
   def GoTo(self,X):
+      #uruchamiam silniki
+      self._start_motors();
+
       #wait for data from robot
       while self._ready==0:
         pass
@@ -154,6 +171,8 @@ class  RosAriaDriver():
   #  @param Z Prędkość obrotu w [rad/s].
   #  @param T Czas trwania w [s].
   def SetSpeed(self, X, Z, T):
+    #uruchamiam silniki
+    self._start_motors();
     self._pub.publish(geometry_msgs.msg.Twist(Vector3(X,0,0),Vector3(0,0,Z)))
     while T>0:
       sleep(0.1);
@@ -167,8 +186,10 @@ class  RosAriaDriver():
   #  @param T Czas trwania w [s].
 
   def SetSpeedLR(self, L, R, T):
+    #uruchamiam silniki
+    self._start_motors();
     SpeedX = (L+R)/2.0
-    SpeedZ = (R-L) /0.185 #polowa roztawu osi
+    SpeedZ = (R-L) /0.163 #polowa roztawu osi
     self._pub.publish(geometry_msgs.msg.Twist(Vector3(SpeedX,0,0),Vector3(0,0,SpeedZ)))
     while T>0:
       sleep(0.1);
@@ -241,6 +262,27 @@ class  RosAriaDriver():
       pass
     return self._sonar;
 
+  ## Zwraca dane z lasera
+  #
+  ## angle_min: -1.57 [rad] \n
+  ## angle_max: 1.56 [rad] \n
+  ## angle_increment: 0.006135 [rad] \n
+  ## range_min: 0.0199 [m] \n
+  ## range_max: 5.5999 [m]
+  #  @param self Wskaźnik na obiekt.
+  #  @return tabicę kolejnych odległości [m].
+
+  def ReadLaser(self):
+    self._LaserReady=0;
+    while self._LaserReady==0:
+      pass
+    return self._laser;
+
+
+  ## Zatrzymuje robota poprzez użycia hamulcy
+  #  @param self Wskaźnik na obiekt.
+  def StopRobot(self):
+      self._stop_motors();
 
   ## Informacja.
   #  @param self Wskaźnik na obiekt.

@@ -132,6 +132,12 @@ Metody publiczne</h2></td></tr>
 <tr class="memitem:a675e49201c6c951751e919b335fe19f6"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ros_aria_driver__package_1_1drive_1_1_ros_aria_driver.html#a675e49201c6c951751e919b335fe19f6">ReadSonar</a></td></tr>
 <tr class="memdesc:a675e49201c6c951751e919b335fe19f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zwraca dane z sonarów.  <a href="#a675e49201c6c951751e919b335fe19f6">Więcej...</a><br/></td></tr>
 <tr class="separator:a675e49201c6c951751e919b335fe19f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2730c735481645437a779f87666f6bb"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ros_aria_driver__package_1_1drive_1_1_ros_aria_driver.html#aa2730c735481645437a779f87666f6bb">ReadLaser</a></td></tr>
+<tr class="memdesc:aa2730c735481645437a779f87666f6bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zwraca dane z lasera.  <a href="#aa2730c735481645437a779f87666f6bb">Więcej...</a><br/></td></tr>
+<tr class="separator:aa2730c735481645437a779f87666f6bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9817ff666fdf60fb5994a70f26aad9d6"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ros_aria_driver__package_1_1drive_1_1_ros_aria_driver.html#a9817ff666fdf60fb5994a70f26aad9d6">StopRobot</a></td></tr>
+<tr class="memdesc:a9817ff666fdf60fb5994a70f26aad9d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zatrzymuje robota poprzez użycia hamulcy.  <a href="#a9817ff666fdf60fb5994a70f26aad9d6">Więcej...</a><br/></td></tr>
+<tr class="separator:a9817ff666fdf60fb5994a70f26aad9d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a390127a1c5b9603b0fbb45430683c424"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_ros_aria_driver__package_1_1drive_1_1_ros_aria_driver.html#a390127a1c5b9603b0fbb45430683c424">About</a></td></tr>
 <tr class="memdesc:a390127a1c5b9603b0fbb45430683c424"><td class="mdescLeft">&#160;</td><td class="mdescRight">Informacja.  <a href="#a390127a1c5b9603b0fbb45430683c424">Więcej...</a><br/></td></tr>
 <tr class="separator:a390127a1c5b9603b0fbb45430683c424"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -360,6 +366,36 @@ Metody publiczne</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="aa2730c735481645437a779f87666f6bb"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def RosAriaDriver_package.drive.RosAriaDriver.ReadLaser </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Zwraca dane z lasera. </p>
+<p>angle_min: -1.57 [rad] <br/>
+ angle_max: 1.56 [rad] <br/>
+ angle_increment: 0.006135 [rad] <br/>
+ range_min: 0.0199 [m] <br/>
+ range_max: 5.5999 [m] </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">self</td><td>Wskaźnik na obiekt. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Zwraca</dt><dd>tabicę kolejnych odległości [m]. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a675e49201c6c951751e919b335fe19f6"></a>
 <div class="memitem">
 <div class="memproto">
@@ -542,13 +578,37 @@ Metody publiczne</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a9817ff666fdf60fb5994a70f26aad9d6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def RosAriaDriver_package.drive.RosAriaDriver.StopRobot </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Zatrzymuje robota poprzez użycia hamulcy. </p>
+<dl class="params"><dt>Parametry</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">self</td><td>Wskaźnik na obiekt. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>Dokumentacja dla tej klasy została wygenerowana z pliku:<ul>
 <li>drive.py</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Wygenerowano Pt, 13 mar 2015 21:31:26 dla RosAriaDriver programem &#160;<a href="http://www.doxygen.org/index.html">
+Wygenerowano Wt, 31 mar 2015 10:44:41 dla RosAriaDriver programem &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

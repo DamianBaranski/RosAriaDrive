@@ -1,4 +1,4 @@
-.TH "RosAriaDriver_package.drive.RosAriaDriver" 3 "Pt, 13 mar 2015" "RosAriaDriver" \" -*- nroff -*-
+.TH "RosAriaDriver_package.drive.RosAriaDriver" 3 "Wt, 31 mar 2015" "RosAriaDriver" \" -*- nroff -*-
 .ad l
 .nh
 .SH NAME
@@ -59,6 +59,14 @@ Klasa ułatwiająca połączenie z robotem Pioneer\&.
 .RI "def \fBReadSonar\fP"
 .br
 .RI "\fIZwraca dane z sonarów\&. \fP"
+.ti -1c
+.RI "def \fBReadLaser\fP"
+.br
+.RI "\fIZwraca dane z lasera\&. \fP"
+.ti -1c
+.RI "def \fBStopRobot\fP"
+.br
+.RI "\fIZatrzymuje robota poprzez użycia hamulcy\&. \fP"
 .ti -1c
 .RI "def \fBAbout\fP"
 .br
@@ -191,6 +199,30 @@ Podniesienie chwytaka\&.
 .RE
 .PP
 
+.SS "def RosAriaDriver_package\&.drive\&.RosAriaDriver\&.ReadLaser (self)"
+
+.PP
+Zwraca dane z lasera\&. angle_min: -1\&.57 [rad] 
+.br
+ angle_max: 1\&.56 [rad] 
+.br
+ angle_increment: 0\&.006135 [rad] 
+.br
+ range_min: 0\&.0199 [m] 
+.br
+ range_max: 5\&.5999 [m] 
+.PP
+\fBParametry:\fP
+.RS 4
+\fIself\fP Wskaźnik na obiekt\&. 
+.RE
+.PP
+\fBZwraca:\fP
+.RS 4
+tabicę kolejnych odległości [m]\&. 
+.RE
+.PP
+
 .SS "def RosAriaDriver_package\&.drive\&.RosAriaDriver\&.ReadSonar (self)"
 
 .PP
@@ -262,6 +294,17 @@ Zadanie prędkości lewego i prawego koła \&.
 \fIR\fP Prędkość prawego koła w[m/s]\&. 
 .br
 \fIT\fP Czas trwania w [s]\&. 
+.RE
+.PP
+
+.SS "def RosAriaDriver_package\&.drive\&.RosAriaDriver\&.StopRobot (self)"
+
+.PP
+Zatrzymuje robota poprzez użycia hamulcy\&. 
+.PP
+\fBParametry:\fP
+.RS 4
+\fIself\fP Wskaźnik na obiekt\&. 
 .RE
 .PP
 
