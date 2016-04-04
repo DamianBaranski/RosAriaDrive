@@ -9,6 +9,7 @@
 #  @date     25/02/2015 \n
 #  @license  Projekt rozwijany na licencji GNU GPL
 
+import uuid
 import roslib
 import rospy
 import tf
@@ -68,6 +69,11 @@ class  RosAriaDriver():
     self._laser=data.ranges;
     self._LaserReady=1;
 
+  def _callback_wheels(self, data):
+    self._wheel_pos=data.position;
+    self._wheel_vel=data.velocity;
+    self._wheelsReady=1;
+
 
   ## Konstruktor.
   #  @param self Wskaźnik na obiekt.
@@ -85,11 +91,12 @@ class  RosAriaDriver():
     self._sonar = [];
     self._SonarReady=0;
    
-    rospy.init_node('drive')
-
+    rospy.init_node('drive_'+str(uuid.uuid4())[1:7])
+    
     rospy.Subscriber(self._ROBOT+"/RosAria/pose", nav_msgs.msg.Odometry, self._callback_pose)
     rospy.Subscriber(self._ROBOT+"/RosAria/sonar_pointcloud2",  sensor_msgs.msg.PointCloud2, self._callback_sonar)
     rospy.Subscriber(self._ROBOT+"/scan",  sensor_msgs.msg.LaserScan, self._callback_laser)
+    rospy.Subscriber(self._ROBOT+"/RosAria/wheels",  sensor_msgs.msg.JointState, self._callback_wheels)
 
     self._GripperOpen  = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_open',std_srvs.srv.Empty)
     self._GripperClose = rospy.ServiceProxy(self._ROBOT+'/RosAria/gripper_close',std_srvs.srv.Empty)
@@ -283,6 +290,15 @@ class  RosAriaDriver():
       pass
     return self._laser;
 
+  ## Zwraca dane z enkoderów
+  #  @param self Wskaźnik na obiekt.
+  #  @return tabicę [(posL,posR),(velL,velR)].
+ 
+  def ReadEncoder(self):
+    self._wheelsReady=0;
+    while self._wheelsReady==0:
+      pass
+    return [self._wheel_pos, self._wheel_vel];
 
   ## Zatrzymuje robota poprzez użycia hamulcy
   #  @param self Wskaźnik na obiekt.
@@ -299,4 +315,7 @@ class  RosAriaDriver():
     print("Licencja : GNU GPL")
     print("Kontakt  : damian.baranski@pwr.wroc.pl")
     print("\n\n\n")
+
+  def Version(self):
+    return "v1.0.4";
 
