@@ -1,9 +1,17 @@
-#!/usr/bin/env python
-
-from time import sleep
-from RosAriaDriver_package.drive import RosAriaDriver
+#!/usr/bin/env python 
+from time import sleep 
+from drive import RosAriaDriver 
 
 robot=RosAriaDriver('/PIONIER2')
-robot.SetSpeedLR(-1,1,10);
+print robot.GetPose()
+robot.ResetPose()
+print robot.GetPose()
+robot.SetSpeedLR(0.1,0.1,3);
+robot.SetSpeedLR(0,0,3);
+print robot.GetPose()
+robot.SetSpeedLR(-0.1,-0.1,3);
+robot.SetSpeedLR(0,0,3);
+print robot.GetPose()
 
 
+robot.StopRobot();
