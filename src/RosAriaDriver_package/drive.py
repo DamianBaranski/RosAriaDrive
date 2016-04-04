@@ -34,8 +34,8 @@ MaxAngleSpeed=0.8;
 class  RosAriaDriver():
     #Subscribe rosaria pose topic and return position and rotate
   def _callback_pose(self, data):
-    self._x=data.pose.pose.position.x-self._x0;
-    self._y=data.pose.pose.position.y-self._y0;
+    tmp_x=data.pose.pose.position.x-self._x0;
+    tmp_y=data.pose.pose.position.y-self._y0;
 
     quaternion = (
         data.pose.pose.orientation.x,
@@ -44,7 +44,11 @@ class  RosAriaDriver():
         data.pose.pose.orientation.w)
     euler = tf.transformations.euler_from_quaternion(quaternion)
 
-    self._z = divmod(euler[2]/3.14*180-self._z0+180,360)[1]-180;
+    
+    self._z = divmod(euler[2]/math.pi*180-self._z0+180,360)[1]-180;
+    self._x = tmp_x*math.cos(-self._z0/180*math.pi)-tmp_y*math.sin(-self._z0/180*math.pi);
+    self._y = tmp_x*math.sin(-self._z0/180*math.pi)+tmp_y*math.cos(-self._z0/180*math.pi);
+
     self._ready=1;
 
 
@@ -239,7 +243,7 @@ class  RosAriaDriver():
   def GetPose(self):
     while self._ready==0:
       pass
-    return (self._x-self._x0, self._y-self._y0, divmod(self._z-self._z0+180,360)[1]-180)
+    return (self._x, self._y, self._z)
 
   ## Zeruje pozycję robota
   #  @param self Wskaźnik na obiekt.
@@ -251,6 +255,7 @@ class  RosAriaDriver():
     self._x0=self._x;
     self._y0=self._y;
     self._z0=self._z;
+    self._ready=0
 
   ## Zwraca dane z sonarów
   #  @param self Wskaźnik na obiekt.
