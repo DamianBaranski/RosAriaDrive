@@ -1,0 +1,8 @@
+#!/bin/bash
+
+diff=`git diff --name-status | awk '$1 != "R" { print $2 }'`
+if [[ $diff  == *'src/RosAriaDriver_package/drive.py'* ]]; then
+  commitCount=`git  rev-list --all | wc -l`
+  sed -i "/def Version(self):/!b;n;c\ \ \ \ return \"v1.0.${commitCount}\";" src/RosAriaDriver_package/drive.py
+  echo "Wersja: \"v1.0.${commitCount}\""
+fi
