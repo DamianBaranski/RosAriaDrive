@@ -200,7 +200,7 @@ class  RosAriaDriver():
     #uruchamiam silniki
     self._start_motors();
     SpeedX = (L+R)/2.0
-    SpeedZ = (R-L) /0.163 #polowa roztawu osi
+    SpeedZ = (R-L) /0.326 #polowa roztawu osi
     self._pub.publish(geometry_msgs.msg.Twist(Vector3(SpeedX,0,0),Vector3(0,0,SpeedZ)))
     while T>0:
       sleep(0.1);
