@@ -5,3 +5,5 @@
 *.pyc
 dox/man
 dox/html
+html
+latex
